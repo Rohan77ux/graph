@@ -6,7 +6,6 @@ void adjmatrix(vector<pair<int, int>> v)
 {
     int maxNode = 0;
 
-    // Find maximum node
     for (auto i : v)
     {
         maxNode = max(maxNode, max(i.first, i.second));
@@ -23,7 +22,6 @@ void adjmatrix(vector<pair<int, int>> v)
         adj[x][u] = 1;
     }
 
-    
     for (auto i : adj)
     {
         for (auto j : i)

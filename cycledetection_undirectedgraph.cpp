@@ -5,46 +5,96 @@
 #include <queue>
 using namespace std;
 
-class Graph {
+class Graph
+{
 public:
     unordered_map<int, list<int>> adjList;
 
-    void addEdge(int u, int v) {
+    void addEdge(int u, int v)
+    {
         adjList[u].push_back(v);
         adjList[v].push_back(u);
     }
 
-    bool bfsCycle(int src, vector<bool> &visit) {
-        queue<pair<int,int>> q; 
+    bool dfsCycle(int node, int parent, vector<bool> &visit, unordered_map<int, list<int>> &adjList)
+    {
+        visit[node] = true;
+        for (int nbr : adjList[node])
+        {
+            if (!visit[nbr])
+            {
+                if (dfsCycle(nbr, node, visit, adjList))
+                {
+                    return true;
+                }
+            }
+            else if (nbr != parent)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool isCycleDfs(int n)
+    {
+
+        vector<bool> visit(n, false);
+
+        for (int i = 0; i < n; i++)
+        {
+            if (!visit[i])
+            {
+                if (dfsCycle(i, -1, visit, adjList))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool bfsCycle(int src, vector<bool> &visit)
+    {
+        queue<pair<int, int>> q;
         q.push({src, -1});
         visit[src] = true;
 
-        while (!q.empty()) {
+        while (!q.empty())
+        {
             auto front = q.front();
             q.pop();
 
             int node = front.first;
             int parent = front.second;
 
-            for (int nbr : adjList[node]) {
-                if (!visit[nbr]) {
+            for (int nbr : adjList[node])
+            {
+                if (!visit[nbr])
+                {
                     visit[nbr] = true;
                     q.push({nbr, node});
                 }
-                else if (nbr != parent) {
-                    return true; 
+                else if (nbr != parent)
+                {
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    bool isCycleBFS(int n) {
+    bool isCycleBFS(int n)
+    {
         vector<bool> visit(n, false);
 
-        for (int i = 0; i < n; i++) {
-            if (!visit[i]) {
-                if (bfsCycle(i, visit)) {
+        for (int i = 0; i < n; i++)
+        {
+            if (!visit[i])
+            {
+                if (bfsCycle(i, visit))
+                {
                     return true;
                 }
             }
@@ -53,17 +103,24 @@ public:
     }
 };
 
-int main() {
+int main()
+{
+
     Graph g;
     g.addEdge(0, 1);
     g.addEdge(1, 2);
     g.addEdge(2, 3);
-    g.addEdge(3, 1); 
+    g.addEdge(3, 1);
 
     if (g.isCycleBFS(4))
         cout << "Cycle detected (BFS)\n";
     else
         cout << "No cycle\n";
+
+    if (g.isCycleDfs(4))
+        return cout << "Cycle detected (DFS)\n", 0;
+    else
+        return cout << "No cycle\n", 0;
 
     return 0;
 }
